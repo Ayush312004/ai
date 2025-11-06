@@ -1,0 +1,43 @@
+graph = {
+    'A' : ['B','C'],
+    'B' : ['D', 'E'],
+    'C' : ['F'],
+    'D' : [],
+    'E' : [],
+    'F' : []
+}
+visited = set() # Set to keep track of visited nodes of graph.
+def dfs(visited, graph, node): #function for dfs
+    if node not in visited:
+        print (node)
+        visited.add(node)
+        for neighbour in graph[node]:
+                dfs(visited, graph, neighbour)
+# Driver Code
+print("Following is the Path using Depth-First Search")
+dfs(visited, graph, 'A')
+
+-----------------------------------------------------------------------------------------------------------------
+graph = {
+'A' : ['B','C'],
+'B' : ['D', 'E'],
+'C' : ['F'],
+'D' : [],
+'E' : [],
+'F' : []
+}
+visited = [] # List to keep track of visited nodes.
+queue = [] #Initialize a queue
+def bfs(visited, graph, node):
+    visited.append(node)
+    queue.append(node)
+    while queue:
+        s = queue.pop(0)
+        print (s)
+        for neighbour in graph[s]:
+            if neighbour not in visited:
+                visited.append(neighbour)
+                queue.append(neighbour)
+# Driver Code
+print("Following is the Path using Breadth-First Search")
+bfs(visited, graph, 'A')
