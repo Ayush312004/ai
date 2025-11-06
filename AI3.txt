@@ -1,0 +1,32 @@
+def find(parent, i):
+    if parent[i] == i:
+        return i
+    parent[i] = find(parent, parent[i])
+    return parent[i]
+def union(parent, u, v):
+    root_u = find(parent, u)
+    root_v = find(parent, v)
+    parent[root_v] = root_u 
+def kruskal(vertices, edges):
+    edges.sort(key=lambda x: x[0])
+    parent = [i for i in range(vertices)]
+    mst = []  
+
+    for w, u, v in edges:
+        if find(parent, u) != find(parent, v):
+            union(parent, u, v)
+            mst.append((u, v, w))
+    return mst
+
+edges = [
+    (1, 7, 6), (2, 8, 2), (2, 6, 5), (4, 0, 1),
+    (4, 2, 5), (6, 8, 6), (7, 2, 3), (7, 7, 8),
+    (8, 0, 7), (8, 1, 2), (9, 3, 4), (10, 5, 4),
+    (11, 1, 7), (14, 3, 5)
+]
+
+mst = kruskal(9, edges)
+
+print("Edges in MST:")
+for u, v, w in mst:
+    print(u, "--", v, "==", w)
