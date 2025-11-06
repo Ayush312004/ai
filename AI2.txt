@@ -1,0 +1,94 @@
+import heapq
+
+directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+def heuristic(a, b):
+    
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+def reconstruct_path(came_from, current, start):
+    path = [current]
+    while current in came_from:
+        current = came_from[current]
+        path.append(current)
+   
+    if path[-1] != start:
+        path.append(start)
+    path.reverse()
+    return path
+
+def a_star(grid, start, goal):
+    rows, cols = len(grid), len(grid[0])
+   
+    if not (0 <= start[0] < rows and 0 <= start[1] < cols): 
+        return None
+    if not (0 <= goal[0] < rows and 0 <= goal[1] < cols):
+        return None
+    if grid[start[0]][start[1]] == 1 or grid[goal[0]][goal[1]] == 1:
+        return None
+
+    open_heap = []            
+    tie = 0                   
+    g_score = {start: 0}
+    came_from = {}
+    closed_set = set()
+
+    start_f = heuristic(start, goal)
+    heapq.heappush(open_heap, (start_f, tie, start))
+
+    while open_heap:
+        _, _, current = heapq.heappop(open_heap)
+
+        if current == goal:
+            return reconstruct_path(came_from, current, start)
+
+        if current in closed_set:
+            continue
+        closed_set.add(current)
+
+        for d in directions:
+            neighbor = (current[0] + d[0], current[1] + d[1])
+            nr, nc = neighbor
+            if not (0 <= nr < rows and 0 <= nc < cols):
+                continue
+            if grid[nr][nc] == 1:
+                continue 
+
+            tentative_g_score = g_score[current] + 1
+
+            if tentative_g_score < g_score.get(neighbor, float('inf')):
+                came_from[neighbor] = current
+                g_score[neighbor] = tentative_g_score
+                f_score = tentative_g_score + heuristic(neighbor, goal)
+                tie += 1
+                heapq.heappush(open_heap, (f_score, tie, neighbor))
+
+    return None  
+
+if __name__ == "__main__":
+    grid = [
+        [0, 1, 0, 0, 0],
+        [0, 1, 0, 1, 0],
+        [0, 0, 0, 1, 0],
+        [0, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0]
+    ]
+
+    start = (0, 0)
+    goal = (4, 4)
+
+    path = a_star(grid, start, goal)
+    print("Path found:", path)
+
+   
+    if path:
+        display = [['#' if grid[r][c] == 1 else '.' for c in range(len(grid[0]))] for r in range(len(grid))]
+        for (r, c) in path:
+            display[r][c] = '*'
+        display[start[0]][start[1]] = 'S'
+        display[goal[0]][goal[1]] = 'G'
+        print("\nGrid (S=start, G=goal, *=path, #=wall):")
+        for row in display:
+            print(' '.join(row))
+    else:
+        print("No path available.")
