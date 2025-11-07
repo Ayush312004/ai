@@ -1,0 +1,36 @@
+def print_solution(board, n):
+    for i in range(n):
+        row = ""
+        for j in range(n):
+            if board[i] == j:
+                row += "Q "
+            else:
+                row += ". "
+        print(row)
+    print("\n")
+
+def solve_nqueens(row, n, board, cols, diag1, diag2):
+    if row == n:
+        print_solution(board, n)
+        return
+
+    for col in range(n):
+        if not cols[col] and not diag1[row - col + n - 1] and not diag2[row + col]:
+            board[row] = col
+            cols[col] = True
+            diag1[row - col + n - 1] = True
+            diag2[row + col] = True
+
+            solve_nqueens(row + 1, n, board, cols, diag1, diag2)
+
+            cols[col] = False
+            diag1[row - col + n - 1] = False
+            diag2[row + col] = False
+
+n = 4
+board = [-1] * n
+cols = [False] * n
+diag1 = [False] * (2 * n - 1)
+diag2 = [False] * (2 * n - 1)
+
+solve_nqueens(0, n, board, cols, diag1, diag2)
